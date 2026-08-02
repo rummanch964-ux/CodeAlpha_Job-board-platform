@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Job Board Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6f9;
+            color: #2c3e50;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a69bd 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 16px 22px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: #4a69bd;
+        }
+
+        .tab-btn.active {
+            color: #4a69bd;
+            border-bottom-color: #4a69bd;
+        }
+
+        .tab-content {
+            display: none;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h2 {
+            font-size: 17px;
+            margin-bottom: 16px;
+            color: #2c3e50;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        label:first-of-type {
+            margin-top: 0;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #4a69bd;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .btn {
+            margin-top: 16px;
+            padding: 11px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #4a69bd 0%, #2c3e50 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn:hover {
+            opacity: 0.92;
+        }
+
+        .btn-small {
+            width: auto;
+            margin-top: 0;
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-row input,
+        .filter-row select {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .job-item {
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+
+        .job-item h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .job-company {
+            color: #4a69bd;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .job-meta {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .job-desc {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eef1fb;
+            color: #4a69bd;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-right: 6px;
+        }
+
+        .badge.status-Pending {
+            background: #fff4e0;
+            color: #b8860b;
+        }
+
+        .badge.status-Shortlisted {
+            background: #e6f9ee;
+            color: #1e8449;
+        }
+
+        .badge.status-Rejected {
+            background: #fdecea;
+            color: #c0392b;
+        }
+
+        .apply-form {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            align-items: center;
+        }
+
+        .apply-form input[type="number"] {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .status-msg {
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-radius: 6px;
+        }
+
+        .status-success {
+            background: #eafaf1;
+            color: #1e8449;
+        }
+
+        .status-error {
+            background: #fdecea;
+            color: #c0392b;
+        }
+
+        .empty-msg {
+            color: #999;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .app-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 12px 0;
+            font-size: 13px;
+        }
+
+        .app-item:last-child {
+            border-bottom: none;
+        }
+
+        .note {
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>💼 Job Board Platform</h1>
+        <p>Post jobs, search opportunities, and manage applications</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('browse')">🔍 Browse Jobs</button>
+        <button class="tab-btn" onclick="switchTab('employer')">🏢 Employer</button>
+        <button class="tab-btn" onclick="switchTab('candidate')">🧑 Candidate</button>
+        <button class="tab-btn" onclick="switchTab('myapps')">📋 My Applications</button>
+    </div>
+
+    <!-- ===== BROWSE JOBS TAB ===== -->
+    <div id="browse" class="tab-content active">
+        <div class="card">
+            <h2>Search Jobs</h2>
+            <div class="filter-row">
+                <input type="text" id="filterTitle" placeholder="Job title">
+                <input type="text" id="filterLocation" placeholder="Location">
+                <select id="filterType">
+                    <option value="">Any type</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Remote">Remote</option>
+                    <option value="Internship">Internship</option>
+                </select>
+                <button class="btn btn-small" onclick="loadJobs()">Search</button>
+            </div>
+            <div id="jobsList">Loading...</div>
+        </div>
+    </div>
+
+    <!-- ===== EMPLOYER TAB ===== -->
+    <div id="employer" class="tab-content">
+        <div class="card">
+            <h2>Register as Employer</h2>
+            <label>Company Name</label>
+            <input type="text" id="empCompany" placeholder="e.g. Tech Solutions Inc.">
+            <label>Email</label>
+            <input type="email" id="empEmail" placeholder="hr@company.com">
+            <button class="btn" onclick="registerEmployer()">Register</button>
+            <div id="empMsg"></div>
+            <p class="note">After registering, use the Employer ID you receive to post a job below.</p>
+        </div>
+
+        <div class="card">
+            <h2>Post a Job</h2>
+            <label>Employer ID</label>
+            <input type="number" id="jobEmployerId" placeholder="Your Employer ID">
+            <label>Job Title</label>
+            <input type="text" id="jobTitle" placeholder="e.g. Backend Developer">
+            <label>Description</label>
+            <textarea id="jobDesc" placeholder="Job details..."></textarea>
+            <label>Location</label>
+            <input type="text" id="jobLocation" placeholder="e.g. Lahore">
+            <label>Salary</label>
+            <input type="text" id="jobSalary" placeholder="e.g. 50,000 - 80,000 PKR">
+            <label>Job Type</label>
+            <select id="jobType">
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Remote">Remote</option>
+                <option value="Internship">Internship</option>
+            </select>
+            <button class="btn" onclick="postJob()">Post Job</button>
+            <div id="jobMsg"></div>
+        </div>
+
+        <div class="card">
+            <h2>View Applications for a Job</h2>
+            <label>Job ID</label>
+            <input type="number" id="viewJobId" placeholder="Job ID">
+            <button class="btn btn-small" style="margin-top:10px;" onclick="loadJobApplications()">View
+                Applications</button>
+            <div id="jobAppsList" style="margin-top:16px;"></div>
+        </div>
+    </div>
+
+    <!-- ===== CANDIDATE TAB ===== -->
+    <div id="candidate" class="tab-content">
+        <div class="card">
+            <h2>Register as Candidate</h2>
+            <label>Full Name</label>
+            <input type="text" id="candName" placeholder="Your name">
+            <label>Email</label>
+            <input type="email" id="candEmail" placeholder="you@email.com">
+            <button class="btn" onclick="registerCandidate()">Register</button>
+            <div id="candMsg"></div>
+            <p class="note">After registering, use the Candidate ID you receive when applying and in the "My
+                Applications" tab.</p>
+        </div>
+    </div>
+
+    <!-- ===== MY APPLICATIONS TAB ===== -->
+    <div id="myapps" class="tab-content">
+        <div class="card">
+            <h2>Check My Applications</h2>
+            <label>Candidate ID</label>
+            <div style="display:flex; gap:8px;">
+                <input type="number" id="myCandidateId" placeholder="Your Candidate ID">
+                <button class="btn btn-small" onclick="loadMyApplications()">Check</button>
+            </div>
+            <div id="myAppsList" style="margin-top:16px;"></div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ===== BROWSE JOBS =====
+        async function loadJobs() {
+            const title = document.getElementById('filterTitle').value;
+            const location = document.getElementById('filterLocation').value;
+            const job_type = document.getElementById('filterType').value;
+
+            const params = new URLSearchParams();
+            if (title) params.append('title', title);
+            if (location) params.append('location', location);
+            if (job_type) params.append('job_type', job_type);
+
+            const container = document.getElementById('jobsList');
+            try {
+                const res = await fetch(`/jobs?${params.toString()}`);
+                const jobs = await res.json();
+
+                if (jobs.length === 0) {
+                    container.innerHTML = '<p class="empty-msg">No jobs found</p>';
+                    return;
+                }
+
+                container.innerHTML = jobs.map(job => `
+          <div class="job-item">
+            <h3>${job.title}</h3>
+            <div class="job-company">${job.company_name}</div>
+            <div class="job-meta">📍 ${job.location} &nbsp; ${job.salary ? '💰 ' + job.salary : ''} &nbsp; ${job.job_type ? '<span class="badge">' + job.job_type + '</span>' : ''}</div>
+            <div class="job-desc">${job.description || ''}</div>
+            <div class="apply-form">
+              <input type="number" id="candId-${job.id}" placeholder="Your Candidate ID">
+              <input type="file" id="resume-${job.id}">
+              <button class="btn btn-small" onclick="applyJob(${job.id})">Apply</button>
+            </div>
+            <div id="applyMsg-${job.id}"></div>
+          </div>
+        `).join('');
+            } catch (err) {
+                container.innerHTML = '<p class="empty-msg">Failed to load jobs</p>';
+            }
+        }
+
+        async function applyJob(jobId) {
+            const candidateId = document.getElementById(`candId-${jobId}`).value;
+            const fileInput = document.getElementById(`resume-${jobId}`);
+            const msgDiv = document.getElementById(`applyMsg-${jobId}`);
+
+            if (!candidateId || !fileInput.files[0]) {
+                msgDiv.innerHTML = '<div class="status-msg status-error">Candidate ID and resume are both required</div>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('candidate_id', candidateId);
+            formData.append('resume', fileInput.files[0]);
+
+            try {
+                const res = await fetch(`/jobs/${jobId}/apply`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    msgDiv.innerHTML = `<div class="status-msg status-success">${data.message}</div>`;
+                } else {
+                    msgDiv.innerHTML = `<div class="status-msg status-error">${data.error}</div>`;
+                }
+            } catch (err) {
+                msgDiv.innerHTML = '<div class="status-msg status-error">Something went wrong</div>';
+            }
+        }
+
+        // ===== EMPLOYER =====
+        async function registerEmployer() {
+            const company_name = document.getElementById('empCompany').value;
+            const email = document.getElementById('empEmail').value;
+            const msgDiv = document.getElementById('empMsg');
+
+            try {
+                const res = await fetch('/employers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ company_name, email })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    msgDiv.innerHTML = `<div class="status-msg status-success">Registered! Your Employer ID: <b>${data.id}</b></div>`;
+                } else {
+                    msgDiv.innerHTML = `<div class="status-msg status-error">${data.error}</div>`;
+                }
+            } catch (err) {
+                msgDiv.innerHTML = '<div class="status-msg status-error">Something went wrong</div>';
+            }
+        }
+
+        async function postJob() {
+            const employer_id = document.getElementById('jobEmployerId').value;
+            const title = document.getElementById('jobTitle').value;
+            const description = document.getElementById('jobDesc').value;
+            const location = document.getElementById('jobLocation').value;
+            const salary = document.getElementById('jobSalary').value;
+            const job_type = document.getElementById('jobType').value;
+            const msgDiv = document.getElementById('jobMsg');
+
+            try {
+                const res = await fetch('/jobs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ employer_id, title, description, location, salary, job_type })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    msgDiv.innerHTML = `<div class="status-msg status-success">Job posted! Job ID: <b>${data.id}</b></div>`;
+                } else {
+                    msgDiv.innerHTML = `<div class="status-msg status-error">${data.error}</div>`;
+                }
+            } catch (err) {
+                msgDiv.innerHTML = '<div class="status-msg status-error">Something went wrong</div>';
+            }
+        }
+
+        async function loadJobApplications() {
+            const jobId = document.getElementById('viewJobId').value;
+            const container = document.getElementById('jobAppsList');
+
+            if (!jobId) return;
+
+            try {
+                const res = await fetch(`/jobs/${jobId}/applications`);
+                const apps = await res.json();
+
+                if (apps.length === 0) {
+                    container.innerHTML = '<p class="empty-msg">No applications yet for this job</p>';
+                    return;
+                }
+
+                container.innerHTML = apps.map(a => `
+          <div class="app-item">
+            <div>
+              <b>${a.candidate_name}</b> (${a.candidate_email})<br>
+              <span class="badge status-${a.status}">${a.status}</span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-small" onclick="updateStatus(${a.id}, 'Shortlisted')">Shortlist</button>
+              <button class="btn btn-small" style="background:#e74c3c;" onclick="updateStatus(${a.id}, 'Rejected')">Reject</button>
+            </div>
+          </div>
+        `).join('');
+            } catch (err) {
+                container.innerHTML = '<p class="empty-msg">Something went wrong</p>';
+            }
+        }
+
+        async function updateStatus(appId, status) {
+            try {
+                await fetch(`/applications/${appId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                loadJobApplications();
+            } catch (err) {
+                alert('Failed to update status');
+            }
+        }
+
+        // ===== CANDIDATE =====
+        async function registerCandidate() {
+            const name = document.getElementById('candName').value;
+            const email = document.getElementById('candEmail').value;
+            const msgDiv = document.getElementById('candMsg');
+
+            try {
+                const res = await fetch('/candidates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    msgDiv.innerHTML = `<div class="status-msg status-success">Registered! Your Candidate ID: <b>${data.id}</b></div>`;
+                } else {
+                    msgDiv.innerHTML = `<div class="status-msg status-error">${data.error}</div>`;
+                }
+            } catch (err) {
+                msgDiv.innerHTML = '<div class="status-msg status-error">Something went wrong</div>';
+            }
+        }
+
+        // ===== MY APPLICATIONS =====
+        async function loadMyApplications() {
+            const candidateId = document.getElementById('myCandidateId').value;
+            const container = document.getElementById('myAppsList');
+
+            if (!candidateId) return;
+
+            try {
+                const res = await fetch(`/candidates/${candidateId}/applications`);
+                const apps = await res.json();
+
+                if (apps.length === 0) {
+                    container.innerHTML = '<p class="empty-msg">No applications found</p>';
+                    return;
+                }
+
+                container.innerHTML = apps.map(a => `
+          <div class="app-item">
+            <div>
+              <b>${a.job_title}</b> — 📍 ${a.location}
+            </div>
+            <span class="badge status-${a.status}">${a.status}</span>
+          </div>
+        `).join('');
+            } catch (err) {
+                container.innerHTML = '<p class="empty-msg">Something went wrong</p>';
+            }
+        }
+
+        loadJobs();
+    </script>
+</body>
+
+</html>
